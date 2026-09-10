@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Golden Apple Bank — прототип клиентских путей</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: '#B8860B',
+            goldDark: '#9a6f09',
+            graphite: '#3A3226',
+            cream: '#F7F4EC',
+            creamDark: '#F2ECD8',
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Inter', 'Roboto', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app-root"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

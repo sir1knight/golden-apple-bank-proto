@@ -71,7 +71,9 @@ export const instoreFlow = {
             : '<p class="text-[13px] text-graphite/50 mb-4">Поднесите телефон к терминалу или покажите QR-код кассиру</p>'}
           ${loyaltyBadge()}
           <div class="flex-1"></div>
-          <div class="pt-4">${secondaryBtn('btn-m1-qr', 'Показать QR-код кассиру')}</div>
+          <div class="pt-4">${insufficient
+            ? primaryBtn('btn-m1-topup', 'Пополнить через СБП')
+            : secondaryBtn('btn-m1-qr', 'Показать QR-код кассиру')}</div>
         `);
       },
       mount: (el) => {
@@ -82,7 +84,12 @@ export const instoreFlow = {
         }
         const insufficient = state.user.walletBalance < MEMBER_TOTAL;
         el.querySelector('#m1-card-area').addEventListener('click', () => goToScreen(insufficient ? 'sbp1' : 'm2'));
-        el.querySelector('#btn-m1-qr').addEventListener('click', () => goToScreen(insufficient ? 'sbp1' : 'm2alt'));
+        const topupBtn = el.querySelector('#btn-m1-topup');
+        if (topupBtn) {
+          topupBtn.addEventListener('click', () => goToScreen('sbp1'));
+        } else {
+          el.querySelector('#btn-m1-qr').addEventListener('click', () => goToScreen('m2alt'));
+        }
       },
     },
 
@@ -149,7 +156,6 @@ export const instoreFlow = {
         const advance = () => {
           state.user.walletBalance = Math.max(0, state.user.walletBalance - MEMBER_TOTAL);
           state.user.cashbackPoints += bonus(MEMBER_TOTAL);
-          state.lastPurchaseTotal = MEMBER_TOTAL;
           goToScreen('m4', { replace: true });
         };
         const t = setTimeout(advance, 1100);

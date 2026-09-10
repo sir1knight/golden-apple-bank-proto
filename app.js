@@ -95,7 +95,6 @@ root.innerHTML = `
             <button id="nav-restart" class="text-[12px] font-medium text-gold-dark px-2 py-1 rounded-full hover:bg-gold/10">Сначала</button>
           </div>
           <div id="screen-content" class="screen-content"></div>
-          <div class="mobile-menu-trigger md-only"></div>
         </div>
       </div>
     </div>
@@ -106,7 +105,8 @@ root.innerHTML = `
         <div id="demo-switcher" class="flex flex-col gap-0.5"></div>
         <div class="mt-4 pt-3 border-t border-graphite/10 text-[12px] text-graphite/50 leading-relaxed">
           Баланс: <span id="demo-balance" class="font-medium text-graphite/70"></span><br/>
-          Карта: <span id="demo-card" class="font-medium text-graphite/70"></span>
+          Карта: <span id="demo-card" class="font-medium text-graphite/70"></span><br/>
+          Баллы: <span id="demo-points" class="font-medium text-graphite/70"></span>
         </div>
       </div>
     </aside>
@@ -271,6 +271,7 @@ function syncSidebars() {
   renderDemoSwitcher(document.getElementById('demo-switcher-mobile'));
   document.getElementById('demo-balance').textContent = formatMoney(state.user.walletBalance);
   document.getElementById('demo-card').textContent = state.user.cardMasked || '—';
+  document.getElementById('demo-points').textContent = state.user.cashbackPoints.toLocaleString('ru-RU');
 }
 
 function fullRender() {

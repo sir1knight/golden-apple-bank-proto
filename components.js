@@ -8,10 +8,6 @@ export function secondaryBtn(id, label, extra = '') {
   return `<button id="${id}" class="btn-secondary" ${extra}>${label}</button>`;
 }
 
-export function linkBtn(id, label, extra = '') {
-  return `<button id="${id}" class="link-btn" ${extra}>${label}</button>`;
-}
-
 export function screenWrap(inner, opts = {}) {
   const pad = opts.noPad ? '' : 'px-6 pt-6 pb-8';
   return `<div class="flex-1 flex flex-col ${pad}">${inner}</div>`;

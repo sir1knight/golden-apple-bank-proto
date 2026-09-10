@@ -178,15 +178,6 @@ html, body {
 }
 .btn-secondary:active { transform: scale(0.98); background: rgba(58, 50, 38, 0.05); }
 
-.link-btn {
-  color: var(--gold-dark);
-  font-weight: 600;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-}
-
 /* ---------- Misc ---------- */
 .card-visual {
   background: linear-gradient(135deg, #3A3226 0%, #4a4030 60%, #B8860B 140%);

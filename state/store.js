@@ -15,8 +15,6 @@ export const state = {
   currentFlow: null, // 'wallet' | 'online' | 'instore' | null (главный экран)
   currentScreen: null,
   history: [],
-  lastOrderTotal: 0,
-  lastPurchaseTotal: 0,
 };
 
 const listeners = [];

@@ -45,7 +45,6 @@ export const onlineFlow = {
         <div>${primaryBtn('btn-o1-checkout', 'Оформить заказ')}</div>
       `),
       mount: (el) => {
-        state.lastOrderTotal = total;
         el.querySelector('#btn-o1-checkout').addEventListener('click', () => goToScreen('o2'));
       },
     },

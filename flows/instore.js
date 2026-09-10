@@ -26,7 +26,7 @@ function payCard() {
           <span class="text-xs uppercase tracking-wide text-cream/60">Golden Apple</span>
           <span class="text-xs text-cream/60">•• 4471</span>
         </div>
-        <div class="text-[14px] text-cream/75">Поднесите телефон к терминалу</div>
+        <div class="text-[14px] text-cream/75">Кошелёк для оплаты</div>
       </div>`;
   }
   return `
@@ -36,7 +36,6 @@ function payCard() {
       </div>
       <div>
         <div class="text-[20px] font-semibold mb-1">${formatMoney(state.user.walletBalance)}</div>
-        <div class="text-[13px] text-cream/70">Поднесите телефон к терминалу</div>
       </div>
     </div>`;
 }
@@ -67,7 +66,9 @@ export const instoreFlow = {
         return screenWrap(`
           <h1 class="text-[22px] font-semibold text-graphite mb-4">Оплата</h1>
           <div id="m1-card-area" class="cursor-pointer mb-4">${payCard()}</div>
-          ${insufficient ? insufficientNotice(MEMBER_TOTAL - state.user.walletBalance) : ''}
+          ${insufficient
+            ? insufficientNotice(MEMBER_TOTAL - state.user.walletBalance)
+            : '<p class="text-[13px] text-graphite/50 mb-4">Поднесите телефон к терминалу или покажите QR-код кассиру</p>'}
           ${loyaltyBadge()}
           <div class="flex-1"></div>
           <div class="pt-4">${secondaryBtn('btn-m1-qr', 'Показать QR-код кассиру')}</div>

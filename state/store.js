@@ -10,6 +10,7 @@ export const state = {
     cashbackPoints: 320,
     cardMasked: null, // '•• 4471' после открытия счёта
     contractNumber: '№ ГА-2026-847213',
+    loyaltyId: 'GA-77341-2201',
   },
   currentFlow: null, // 'wallet' | 'online' | 'instore' | null (главный экран)
   currentScreen: null,

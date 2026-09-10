@@ -1,9 +1,20 @@
 import { state, goToScreen, goHome, startFlow, formatMoney } from '../state/store.js';
 import { primaryBtn, secondaryBtn, screenWrap, successIcon, faceIdIcon } from '../components.js';
 
-const PURCHASE_TOTAL = 3240;
+const REGULAR_TOTAL = 3600;
+const MEMBER_TOTAL = 3240; // цена по программе лояльности Golden Apple
+const SAVINGS = REGULAR_TOTAL - MEMBER_TOTAL;
+
 function bonus(sum) {
   return Math.round(sum * 0.03);
+}
+
+function loyaltyBadge() {
+  return `
+    <div class="rounded-xl bg-gold/10 px-3 py-2.5 flex items-center gap-2.5">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2l2.6 6.6L21 10l-5 4.4 1.4 6.6L12 17.8 6.6 21 8 14.4 3 10l6.4-1.4L12 2z" stroke="#B8860B" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span class="text-[13px] text-gold-dark font-medium leading-snug">Специальные цены Golden Apple по программе лояльности</span>
+    </div>`;
 }
 
 function payCard() {
@@ -53,7 +64,8 @@ export const instoreFlow = {
         }
         return screenWrap(`
           <h1 class="text-[22px] font-semibold text-graphite mb-4">Оплата</h1>
-          <div id="m1-card-area" class="cursor-pointer">${payCard()}</div>
+          <div id="m1-card-area" class="cursor-pointer mb-4">${payCard()}</div>
+          ${loyaltyBadge()}
           <div class="flex-1"></div>
           <div class="pt-4">${secondaryBtn('btn-m1-qr', 'Показать QR-код кассиру')}</div>
         `);
@@ -99,7 +111,12 @@ export const instoreFlow = {
           <div class="w-52 h-52 rounded-2xl qr-placeholder bg-white border border-graphite/10 p-3">
             <div class="w-full h-full rounded-lg" style="background-image:inherit;background-size:14px 14px;"></div>
           </div>
-          <p class="text-[15px] text-graphite/60">Покажите этот код кассиру</p>
+          <div>
+            <p class="text-[15px] font-medium text-graphite">Покажите этот код кассиру</p>
+            <p class="text-[13px] text-graphite/50 mt-1">QR содержит ID вашей программы лояльности</p>
+            <p class="text-[13px] font-mono tracking-wide text-graphite/70 mt-0.5">${state.user.loyaltyId}</p>
+          </div>
+          ${loyaltyBadge()}
         </div>
         <div class="pt-4">${primaryBtn('btn-m2alt-done', 'Готово')}</div>
       `),
@@ -115,15 +132,19 @@ export const instoreFlow = {
         <div class="flex-1 flex flex-col items-center justify-center text-center gap-4">
           ${faceIdIcon()}
           <h1 class="text-[19px] font-semibold text-graphite">Подтвердите оплату</h1>
-          <p class="text-[14.5px] text-graphite/55">${formatMoney(PURCHASE_TOTAL)}</p>
+          <div class="flex flex-col items-center gap-0.5">
+            <span class="text-[13px] text-graphite/40 line-through">${formatMoney(REGULAR_TOTAL)}</span>
+            <span class="text-[17px] font-semibold text-graphite">${formatMoney(MEMBER_TOTAL)}</span>
+            <span class="text-[12.5px] text-gold-dark font-medium">цена по программе лояльности</span>
+          </div>
         </div>
         <div class="pt-4">${secondaryBtn('btn-m3-done', 'Готово')}</div>
       `),
       mount: (el) => {
         const advance = () => {
-          state.user.walletBalance = Math.max(0, state.user.walletBalance - PURCHASE_TOTAL);
-          state.user.cashbackPoints += bonus(PURCHASE_TOTAL);
-          state.lastPurchaseTotal = PURCHASE_TOTAL;
+          state.user.walletBalance = Math.max(0, state.user.walletBalance - MEMBER_TOTAL);
+          state.user.cashbackPoints += bonus(MEMBER_TOTAL);
+          state.lastPurchaseTotal = MEMBER_TOTAL;
           goToScreen('m4', { replace: true });
         };
         const t = setTimeout(advance, 1100);
@@ -144,8 +165,10 @@ export const instoreFlow = {
           <h1 class="text-[24px] font-semibold text-graphite mb-1">Оплачено</h1>
           <p class="text-[15px] text-graphite/60 mb-6">Golden Apple, магазин на Тверской</p>
           <div class="w-full rounded-2xl bg-creamDark p-4 flex flex-col gap-2 text-left">
-            <div class="flex justify-between"><span class="text-[14px] text-graphite/60">Сумма покупки</span><span class="text-[15px] font-medium text-graphite">${formatMoney(PURCHASE_TOTAL)}</span></div>
-            <div class="flex justify-between"><span class="text-[14px] text-graphite/60">Начислено бонусов</span><span class="text-[15px] font-medium text-gold-dark">+${bonus(PURCHASE_TOTAL)}</span></div>
+            <div class="flex justify-between"><span class="text-[14px] text-graphite/60">Обычная цена</span><span class="text-[15px] text-graphite/40 line-through">${formatMoney(REGULAR_TOTAL)}</span></div>
+            <div class="flex justify-between"><span class="text-[14px] text-graphite/60">Цена по программе лояльности</span><span class="text-[15px] font-medium text-graphite">${formatMoney(MEMBER_TOTAL)}</span></div>
+            <div class="flex justify-between"><span class="text-[14px] text-graphite/60">Ваша экономия</span><span class="text-[15px] font-medium text-gold-dark">−${formatMoney(SAVINGS)}</span></div>
+            <div class="flex justify-between pt-2 border-t border-graphite/10"><span class="text-[14px] text-graphite/60">Начислено бонусов</span><span class="text-[15px] font-medium text-gold-dark">+${bonus(MEMBER_TOTAL)}</span></div>
           </div>
         </div>
         <div class="pt-6">${primaryBtn('btn-m4-done', 'Готово')}</div>

@@ -1,5 +1,6 @@
 import { state, goToScreen, goHome, startFlow, formatMoney } from '../state/store.js';
 import { primaryBtn, secondaryBtn, screenWrap, successIcon, faceIdIcon } from '../components.js';
+import { buildTopUpScreens, insufficientNotice } from './sbpTopup.js';
 
 const REGULAR_TOTAL = 3600;
 const MEMBER_TOTAL = 3240; // цена по программе лояльности Golden Apple
@@ -62,9 +63,11 @@ export const instoreFlow = {
             <div class="pt-6">${primaryBtn('btn-m1-open-wallet', 'Открыть кошелёк')}</div>
           `);
         }
+        const insufficient = state.user.walletBalance < MEMBER_TOTAL;
         return screenWrap(`
           <h1 class="text-[22px] font-semibold text-graphite mb-4">Оплата</h1>
           <div id="m1-card-area" class="cursor-pointer mb-4">${payCard()}</div>
+          ${insufficient ? insufficientNotice(MEMBER_TOTAL - state.user.walletBalance) : ''}
           ${loyaltyBadge()}
           <div class="flex-1"></div>
           <div class="pt-4">${secondaryBtn('btn-m1-qr', 'Показать QR-код кассиру')}</div>
@@ -76,8 +79,9 @@ export const instoreFlow = {
           openWalletBtn.addEventListener('click', () => startFlow('wallet', 'a1'));
           return;
         }
-        el.querySelector('#m1-card-area').addEventListener('click', () => goToScreen('m2'));
-        el.querySelector('#btn-m1-qr').addEventListener('click', () => goToScreen('m2alt'));
+        const insufficient = state.user.walletBalance < MEMBER_TOTAL;
+        el.querySelector('#m1-card-area').addEventListener('click', () => goToScreen(insufficient ? 'sbp1' : 'm2'));
+        el.querySelector('#btn-m1-qr').addEventListener('click', () => goToScreen(insufficient ? 'sbp1' : 'm2alt'));
       },
     },
 
@@ -177,5 +181,11 @@ export const instoreFlow = {
         el.querySelector('#btn-m4-done').addEventListener('click', () => goHome());
       },
     },
+
+    ...buildTopUpScreens({
+      getMissing: () => MEMBER_TOTAL - state.user.walletBalance,
+      nextScreen: 'm3',
+      title: 'Оплата',
+    }),
   },
 };

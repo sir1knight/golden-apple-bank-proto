@@ -1,5 +1,6 @@
 import { state, goToScreen, goHome, startFlow, formatMoney } from '../state/store.js';
 import { primaryBtn, secondaryBtn, screenWrap, successIcon, faceIdIcon } from '../components.js';
+import { buildTopUpScreens, insufficientNotice } from './sbpTopup.js';
 
 const items = [
   { name: 'Увлажняющий крем для лица', price: 2190 },
@@ -66,6 +67,7 @@ export const onlineFlow = {
           `);
         }
         const cb = cashback(total);
+        const insufficient = state.user.walletBalance < total;
         return screenWrap(`
           <h1 class="text-[22px] font-semibold text-graphite mb-4">Оплата заказа</h1>
           <div class="rounded-2xl bg-creamDark p-4 flex items-center gap-3 mb-4">
@@ -78,6 +80,7 @@ export const onlineFlow = {
             </div>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#B8860B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
+          ${insufficient ? insufficientNotice(total - state.user.walletBalance) : ''}
           <div class="flex-1"></div>
           <div class="flex items-center justify-between py-2">
             <span class="text-[14.5px] text-graphite/60">Сумма заказа</span>
@@ -87,13 +90,18 @@ export const onlineFlow = {
             <span class="text-[14.5px] text-graphite/60">Кэшбэк за покупку</span>
             <span class="text-[15px] font-medium text-gold-dark">+${cb} баллов</span>
           </div>
-          <div>${primaryBtn('btn-o2-pay', 'Оплатить')}</div>
+          <div>${insufficient ? primaryBtn('btn-o2-topup', 'Пополнить через СБП') : primaryBtn('btn-o2-pay', 'Оплатить')}</div>
         `);
       },
       mount: (el) => {
         const openWalletBtn = el.querySelector('#btn-o2-open-wallet');
         if (openWalletBtn) {
           openWalletBtn.addEventListener('click', () => startFlow('wallet', 'a1'));
+          return;
+        }
+        const topupBtn = el.querySelector('#btn-o2-topup');
+        if (topupBtn) {
+          topupBtn.addEventListener('click', () => goToScreen('sbp1'));
           return;
         }
         el.querySelector('#btn-o2-pay').addEventListener('click', () => goToScreen('o3'));
@@ -149,5 +157,11 @@ export const onlineFlow = {
         el.querySelector('#btn-o4-order').addEventListener('click', () => goToScreen('o1', { replace: true }));
       },
     },
+
+    ...buildTopUpScreens({
+      getMissing: () => total - state.user.walletBalance,
+      nextScreen: 'o3',
+      title: 'Оплата заказа онлайн',
+    }),
   },
 };
